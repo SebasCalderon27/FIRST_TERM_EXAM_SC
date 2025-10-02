@@ -21,11 +21,7 @@ class UsuarioOut(BaseModel):
     activa: bool
 
 usuarios = [
-    {"id": 1, "usuario": "Theo", "correo": "sebb@gmail.com", "password": "Admin123", "activa": True},
-    {"id": 2, "usuario": "Elianna", "correo": "mateo@gmail.com", "password": "MateooO143", "activa": True},
-    {"id": 3, "usuario": "Ariana", "correo": "ari@gmail.com", "password": "MAr1ana", "activa": True},
-    {"id": 4, "usuario": "Luis", "correo": "luis@gmail.com", "password": "Lucho2016", "activa": False},
-    {"id": 5, "usuario": "Sebas", "correo": "theito@gmail.com", "password": "Them012", "activa": True}
+    {"id": 1, "usuario": "Sebitas", "correo": "sebb@gmail.com", "password": "adD", "activa": True}
 ]
 
 @app.post("/usuarios", response_model=UsuarioOut, status_code=201)
