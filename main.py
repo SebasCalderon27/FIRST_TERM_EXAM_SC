@@ -20,16 +20,14 @@ class UsuarioOut(BaseModel):
     correo: str
     activa: bool
 
-# Base de datos quemada
 usuarios = [
     {"id": 1, "usuario": "Theo", "correo": "sebb@gmail.com", "password": "Admin123", "activa": True},
-    {"id": 2, "usuario": "Elianna",  "correo": "mateo@gmail.com", "password": "MateooO143", "activa": True},
-    {"id": 3, "usuario": "Ariana",   "correo": "ari@gmail.com",  "password": "MAr1ana", "activa": True},
-    {"id": 4, "usuario": "Luis",    "correo": "luis@gmail.com",   "password": "Lucho2016", "activa": False},
-    {"id": 5, "usuario": "Sebas",    "correo": "theito@gmail.com",   "password": "Them012", "activa": True}
+    {"id": 2, "usuario": "Elianna", "correo": "mateo@gmail.com", "password": "MateooO143", "activa": True},
+    {"id": 3, "usuario": "Ariana", "correo": "ari@gmail.com", "password": "MAr1ana", "activa": True},
+    {"id": 4, "usuario": "Luis", "correo": "luis@gmail.com", "password": "Lucho2016", "activa": False},
+    {"id": 5, "usuario": "Sebas", "correo": "theito@gmail.com", "password": "Them012", "activa": True}
 ]
 
-# Crear usuario
 @app.post("/usuarios", response_model=UsuarioOut, status_code=201)
 def crear_usuario(u: UsuarioNuevo):
     if any(x["correo"] == u.correo for x in usuarios):
@@ -43,15 +41,12 @@ def crear_usuario(u: UsuarioNuevo):
         "activa": u.activa
     }
     usuarios.append(user)
-    # Salida el usuario (sin password)
     return {"id": user["id"], "usuario": user["usuario"], "correo": user["correo"], "activa": user["activa"]}
 
-# Listar usuarios
 @app.get("/usuarios", response_model=List[UsuarioOut])
 def listar_usuarios():
     return [{"id": x["id"], "usuario": x["usuario"], "correo": x["correo"], "activa": x["activa"]} for x in usuarios]
 
-# Conseguir un usuario por id
 @app.get("/usuarios/{user_id}", response_model=UsuarioOut)
 def obtener_usuario(user_id: int):
     u = next((x for x in usuarios if x["id"] == user_id), None)
@@ -59,13 +54,11 @@ def obtener_usuario(user_id: int):
         raise HTTPException(status_code=404, detail="usuario no encontrado")
     return {"id": u["id"], "usuario": u["usuario"], "correo": u["correo"], "activa": u["activa"]}
 
-# Actualizar usuario (no se remplaza el id)
 @app.put("/usuarios/{user_id}", response_model=UsuarioOut)
 def actualizar_usuario(user_id: int, data: UsuarioNuevo):
     u = next((x for x in usuarios if x["id"] == user_id), None)
     if not u:
         raise HTTPException(status_code=404, detail="usuario no encontrado")
-    # verificar si el correo nuevo está en uso
     if any(x["correo"] == data.correo and x["id"] != user_id for x in usuarios):
         raise HTTPException(status_code=400, detail="correo ya en uso por otro usuario")
     u["usuario"] = data.usuario
@@ -74,7 +67,6 @@ def actualizar_usuario(user_id: int, data: UsuarioNuevo):
     u["activa"] = data.activa if data.activa is not None else u["activa"]
     return {"id": u["id"], "usuario": u["usuario"], "correo": u["correo"], "activa": u["activa"]}
 
-# Eliminar usuario
 @app.delete("/usuarios/{user_id}")
 def eliminar_usuario(user_id: int):
     global usuarios
@@ -83,7 +75,6 @@ def eliminar_usuario(user_id: int):
     usuarios = [x for x in usuarios if x["id"] != user_id]
     return {"message": "Usuario eliminado"}
 
-# Login
 @app.post("/login")
 def login(payload: Logueo):
     user = next((x for x in usuarios if x["correo"] == payload.correo and x["password"] == payload.password), None)
