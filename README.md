@@ -1,8 +1,30 @@
 Create the virtual enviroment and run the FastAPI app using the commands from the FastAPI guide, in another terminal window (Git Bash),
 execute the attack script — the script’s printed results indicate if the login was successful.
-<img width="846" height="424" alt="image" src="https://github.com/user-attachments/assets/201aa484-82d3-490a-ba4a-78e1c52a7359" />
 
-Operation of API <img width="467" height="359" alt="image" src="https://github.com/user-attachments/assets/c8f56481-2591-4245-8d42-7f62afe9501f" />
+. Virtual Environment Setup
+It's crucial to create and activate a virtual environment to keep your project's dependencies isolated.
+
+Task	Command	Explanation
+Create Environment	python -m venv .venv	Creates the .venv folder containing the isolated virtual environment.
+Activate Environment	source .venv/bin/activate	Activates the virtual environment. Your command prompt will show (.venv).
+
+Note on Activation: If you are using PowerShell on Windows, the activation command is: .\.venv\Scripts\activate
+
+Configuration and Dependency Installation
+With the environment active, proceed to install the necessary packages and set up project hygiene.
+
+Task	Command	Explanation
+Upgrade PIP	python -m pip install --upgrade pip	Ensures your package manager (pip) is up-to-date.
+Ignore Venv	echo "*" > .venv/.gitignore	Creates a .gitignore file inside .venv to prevent committing the environment to Git.
+Install FastAPI	pip install "fastapi[standard]"	Installs the FastAPI framework and standard utilities, including the Uvicorn server.
+Install Requirements	pip install -r requirements.txt	Installs any remaining dependencies listed in your requirements.txt file.
+
+Running the Server
+Your project is now ready to run. This command will launch your API server.
+
+Task	Command	Explanation
+Start API	fastapi dev main.py	Starts the server in development mode. This command is a shortcut for uvicorn main:app --reload.
+
 
 Description of bash
 
